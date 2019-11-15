@@ -172,6 +172,7 @@ class Card {
     this.likes = likes
     this.wasLikedPreviously = !!(likes.find(like => like._id === myId))
     this.cardElement = this.createCard(link, name)
+    this.likeCounter = this.likes.length
     this.likeButton = this.cardElement
       .querySelector('.place-card__like-icon')
     this.likeButton
@@ -202,11 +203,11 @@ class Card {
     placeCardElement.classList.add('place-card')
     placeCardElement.setAttribute('card-id', this.cardId)
     cardImageElement.classList.add('place-card__image')
-    cardImageElement.style.backgroundImage = `url(${this.link})` 
+    cardImageElement.style.backgroundImage = `url(${this.link})`
     likeCards.classList.add('place-card__like-cards')
     cardDescriptionElement.classList.add('place-card__description')
     cardNameElement.classList.add('place-card__name')
-    cardNameElement.textContent = this.name 
+    cardNameElement.textContent = this.name
     likeButtonElement.classList.add('place-card__like-icon')
     if (this.wasLikedPreviously) {
       likeButtonElement.classList.add('place-card__like-icon_liked')
@@ -227,8 +228,9 @@ class Card {
     if (!this.likeButton.classList.contains('place-card__like-icon_liked')) {
       api.likeCard(this.cardId,'PUT')
         .then(data => {
+          this.likeCounter += 1
           this.cardElement
-            .querySelector('.place-card__like-count').textContent = (this.likes.length)
+            .querySelector('.place-card__like-count').textContent = (this.likeCounter)
           this.likeButton.classList.add('place-card__like-icon_liked')
         })
         .catch(err => {
@@ -237,8 +239,9 @@ class Card {
     } else {
       api.likeCard(this.cardId,'DELETE')
         .then(data => {
+          this.likeCounter -= 1
           this.cardElement
-            .querySelector('.place-card__like-count').textContent = (this.likes.length)
+            .querySelector('.place-card__like-count').textContent = (this.likeCounter)
           this.likeButton.classList.remove('place-card__like-icon_liked')
         })
         .catch(err => {
@@ -322,11 +325,11 @@ function openForm (event) {
 }
 
 function openFormEdit (event) {
-  const user = formInfo.elements.user 
+  const user = formInfo.elements.user
   const about = formInfo.elements.about
   document.querySelector('.error-user').textContent = ''
   document.querySelector('.error-about').textContent = ''
-  user.value = userName.textContent 
+  user.value = userName.textContent
   about.value = userInfo.textContent
   new Popup('.popup_edit')
 }
@@ -460,7 +463,7 @@ function renderLoadingPhoto (isLoading) {
 
 const cardList = new CardList(document.querySelector('.places-list'), [], owner)
 
-function newCard (event) { 
+function newCard (event) {
   event.preventDefault()
   renderLoadingCard(true)
   api.postCard(formNew.elements.name.value, formNew.elements.link.value)
