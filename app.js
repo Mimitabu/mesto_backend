@@ -8,7 +8,8 @@ const bodyParser = require('body-parser');
 mongoose.connect('mongodb://localhost:27017/mestodb', {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    useUnifiedTopology: true
 });
 
 app.use((req, res, next) => {
