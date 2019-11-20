@@ -1,26 +1,26 @@
 const User = require('../models/user');
 
-getUsers = (req, res) => {
+const getUsers = (req, res) => {
   User.find({})
-  .populate('user')
-  .then((users) => res.send({data: users}))
-  .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .populate('user')
+    .then((users) => res.send({ data: users }))
+    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-getUserById = (req, res) => {
-   User.findById(req.params.userId)
+const getUserById = (req, res) => {
+  User.findById(req.params.userId)
     .populate('user')
     .then((user) => {
-      if(!user) {
-        res.status(404).send( `Нет пользователя с таким id: ${req.params.userId}` )
+      if (!user) {
+        res.status(404).send(`Нет пользователя с таким id: ${req.params.userId}`);
       } else {
-        res.send({ data: user })
-      };
-      })
+        res.send({ data: user });
+      }
+    })
     .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
-}
+};
 
-createUser = (req, res) => {
+const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
@@ -28,7 +28,7 @@ createUser = (req, res) => {
     .catch((err) => res.status(400).send({ message: 'Произошла ошибка' }));
 };
 
-updateUser = (req, res) => {
+const updateUser = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
@@ -36,7 +36,7 @@ updateUser = (req, res) => {
     .catch((err) => res.status(400).send({ message: 'Произошла ошибка' }));
 };
 
-updateAvatar = (req, res) => {
+const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
@@ -46,8 +46,9 @@ updateAvatar = (req, res) => {
 
 
 module.exports = {
-   getUsers, getUserById,
-   createUser, updateUser,
-   updateAvatar
-}
-
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  updateAvatar,
+};

@@ -1,54 +1,68 @@
 const Card = require('../models/card');
 
-getСards = (req, res) => {
+const getСards = (req, res) => {
   Card.find({})
-  .populate('card')
-  .then((cards) => res.send({data: cards}))
-  .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .populate('card')
+    .then((cards) => res.send({ data: cards }))
+    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-createCard = (req, res) => {
+const createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  Card.create({name, link, owner})
-  .then((cards) => res.status(201).send({data: cards}))
-  .catch((err) => res.status(400).send({ message: 'Произошла ошибка' }));
+  Card.create({ name, link, owner })
+    .then((cards) => res.status(201).send({ data: cards }))
+    .catch((err) => res.status(400).send({ message: 'Произошла ошибка' }));
 };
 
-delCard = (req, res) => {
+const delCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-  .then((cards) => {
-    if(!cards) {
-      res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`)
-    } else {
-      res.send({status: 'OK'})
-    };
-  })
-  .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
-}
+    .then((cards) => {
+      if (!cards) {
+        res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`);
+      } else {
+        res.send({ status: 'OK' });
+      }
+    })
+    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+};
 
-likeCard = (req, res) => {
+const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
-  req.params.cardId,
-  { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-  { new: true },
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { new: true },
   )
-  .then((like) => res.send({ data: like }))
-  .catch((err) => res.status(404).send({ message: 'Произошла ошибка' }));
-}
+    .then((like) => res.send({ data: like }))
+    .catch((err) => {
+      if (err.massage) {
+        res.status(404).send({ message: 'Такой карточки нет' });
+        return;
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
-dislikeCard = (req, res) => {
-    Card.findByIdAndUpdate(
+const dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-  .then((like) => res.send({ data: like }))
-  .catch((err) => res.status(404).send({ message: 'Произошла ошибка' }));
-}
+    .then((like) => res.send({ data: like }))
+    .catch((err) => {
+      if (err.massage) {
+        res.status(404).send({ message: 'Такой карточки нет' });
+        return;
+      }
+      res.status(404).send({ message: 'Произошла ошибка' });
+    });
+};
 
 module.exports = {
-  getСards, createCard,
-  delCard, likeCard,
-  dislikeCard
-}
+  getСards,
+  createCard,
+  delCard,
+  likeCard,
+  dislikeCard,
+};
