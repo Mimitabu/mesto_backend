@@ -33,14 +33,14 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((like) => res.send({ data: like }))
-    .catch((err) => {
-      if (err.massage) {
-        res.status(404).send({ message: 'Такой карточки нет' });
-        return;
+    .then((like) => {
+      if (!like) {
+        res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`);
+      } else {
+        res.send({ data: like });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
-    });
+    })
+    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
 const dislikeCard = (req, res) => {
@@ -49,14 +49,14 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((like) => res.send({ data: like }))
-    .catch((err) => {
-      if (err.massage) {
-        res.status(404).send({ message: 'Такой карточки нет' });
-        return;
+    .then((like) => {
+      if (!like) {
+        res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`);
+      } else {
+        res.send({ data: like });
       }
-      res.status(404).send({ message: 'Произошла ошибка' });
-    });
+    })
+    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports = {
