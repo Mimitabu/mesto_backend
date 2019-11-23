@@ -4,7 +4,7 @@ const getСards = (req, res) => {
   Card.find({})
     .populate('card')
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(500).send({ message: err }));
 };
 
 const createCard = (req, res) => {
@@ -12,7 +12,7 @@ const createCard = (req, res) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((cards) => res.status(201).send({ data: cards }))
-    .catch((err) => res.status(400).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(400).send({ message: err }));
 };
 
 const delCard = (req, res) => {
@@ -24,7 +24,7 @@ const delCard = (req, res) => {
         res.send({ status: 'OK' });
       }
     })
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(500).send({ message: err }));
 };
 
 const likeCard = (req, res) => {
@@ -40,7 +40,7 @@ const likeCard = (req, res) => {
         res.send({ data: like });
       }
     })
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(500).send({ message: err }));
 };
 
 const dislikeCard = (req, res) => {
@@ -56,7 +56,7 @@ const dislikeCard = (req, res) => {
         res.send({ data: like });
       }
     })
-    .catch((err) => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => res.status(500).send({ message: err }));
 };
 
 module.exports = {

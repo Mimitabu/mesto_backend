@@ -4,7 +4,6 @@ const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 
 const app = express();
-const path = require('path');
 const bodyParser = require('body-parser');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
