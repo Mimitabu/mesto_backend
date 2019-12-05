@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 
 const app = express();
 const bodyParser = require('body-parser');
+const auth = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
+
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -13,20 +16,23 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  req.user = {
-    // вставьте сюда _id созданного в предыдущем пункте пользователя
-    _id: '5dcff0fd16a9074da7cd3f04',
-  };
+// app.use((req, res, next) => {
+//   req.user = {
+//     // вставьте сюда _id созданного в предыдущем пункте пользователя
+//     _id: '5dcff0fd16a9074da7cd3f04',
+//   };
 
-  next();
-});
+//   next();
+// });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/', require('./routes/users'));
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
-app.use('/', require('./routes/cards'));
 
 app.use('*', (req, res) => res.status(404).send({ massage: 'Произошла ошибка' }));
 
