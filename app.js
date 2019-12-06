@@ -5,9 +5,8 @@ const mongoose = require('mongoose');
 
 const app = express();
 const bodyParser = require('body-parser');
-const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
-
+const auth = require('./middlewares/auth');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -16,20 +15,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     // вставьте сюда _id созданного в предыдущем пункте пользователя
-//     _id: '5dcff0fd16a9074da7cd3f04',
-//   };
-
-//   next();
-// });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/signin', login);
 app.post('/signup', createUser);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 

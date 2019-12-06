@@ -29,9 +29,8 @@ const userSchema = new mongoose.Schema({
     },
   },
   password: {
-    tipe: String,
-    // required: true,
-    // minlength: 8,
+    type: String,
+    required: true,
     select: false,
   },
 });

@@ -36,7 +36,7 @@ const createUser = (req, res) => {
       _id: user._id,
       email: user.email,
     }))
-    .catch((err) => res.status(400).send({ message: err }));
+    .catch((err) => res.status(400).send({ message: err.message }));
 };
 
 const updateUser = (req, res) => {
