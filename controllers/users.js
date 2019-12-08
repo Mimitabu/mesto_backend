@@ -15,7 +15,7 @@ const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(404).send(`'Нет пользователя с таким id: '${req.params.userId}`);
+        res.status(422).send(`'Нет пользователя с таким id: '${req.params.userId}`);
       } else {
         res.send({ data: user });
       }
@@ -70,7 +70,7 @@ const login = (req, res) => {
           }
           const token = jwt.sign(
             { _id: user._id },
-            key,
+            key.key,
             { expiresIn: '7d' },
           );
           return res.cookie('jwt', token, {
