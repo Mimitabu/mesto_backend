@@ -15,16 +15,31 @@ const createCard = (req, res) => {
     .catch((err) => res.status(400).send({ message: err }));
 };
 
-const delCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((cards) => {
-      if (!cards) {
-        res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`);
-      } else {
-        res.send({ status: 'OK' });
-      }
-    })
-    .catch((err) => res.status(500).send({ message: err }));
+const delCard = async (req, res) => {
+  const { _id } = req.user;
+  const { cardId } = req.params;
+  let card;
+  try {
+    card = await Card.findOne({ _id: cardId });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+    return;
+  }
+  if (!card) {
+    res.status(404).send(`Нет карточки с таким id: ${cardId}`);
+    return;
+  }
+  if (String(card.owner) === _id) {
+    let deletedCard;
+    try {
+      deletedCard = await Card.findByIdAndRemove(cardId);
+      res.send(deletedCard);
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
+  } else {
+    res.status(403).send('Нельзя удалить карточку, созданную другим пользователем');
+  }
 };
 
 const likeCard = (req, res) => {
@@ -35,7 +50,7 @@ const likeCard = (req, res) => {
   )
     .then((like) => {
       if (!like) {
-        res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`);
+        res.status(422).send(`Нет карточки с таким id: ${req.params.cardId}`);
       } else {
         res.send({ data: like });
       }
@@ -51,7 +66,7 @@ const dislikeCard = (req, res) => {
   )
     .then((like) => {
       if (!like) {
-        res.status(404).send(`Нет карточки с таким id: ${req.params.cardId}`);
+        res.status(422).send(`Нет карточки с таким id: ${req.params.cardId}`);
       } else {
         res.send({ data: like });
       }

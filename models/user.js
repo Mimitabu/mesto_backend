@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,7 +19,20 @@ const userSchema = new mongoose.Schema({
     required: true,
     match: /(https?:\/\/)(www\.)?(((\d{1,3}\.){3}\d{1,3})|((\w+)((-\w+)+)?\.\w{2,4}))((\.\w+)+)?(:\d{2,5})?((\/+\w+)+#?)?/,
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: (v) => validator.isEmail(v),
+      message: 'It is not valid email',
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
+  },
 });
-
 
 module.exports = mongoose.model('user', userSchema);
