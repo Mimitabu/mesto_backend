@@ -4,6 +4,7 @@
   "description": "## Сервис, где можно делиться фотографиями. Серверная часть",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -19,6 +20,7 @@
   "homepage": "https://github.com/Mimitabu/mesto_backend#readme",
   "devDependencies": {
     "eslint": "^6.6.0",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.4"
   },
   "dependencies": {

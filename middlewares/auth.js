@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, key);
+    payload = jwt.verify(token, key.key);
   } catch (err) {
     return handleAuthError(res);
   }
