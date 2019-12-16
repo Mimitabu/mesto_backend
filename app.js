@@ -28,7 +28,6 @@ app.use(auth);
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-// app.use('*', (req, res) => res.status(404).send({ massage: 'Произошла ошибка' }));
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
