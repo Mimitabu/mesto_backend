@@ -4,6 +4,8 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const AuthError = require('../errors/auth-error');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const getUsers = (req, res) => {
   User.find({})
     .populate('user')
