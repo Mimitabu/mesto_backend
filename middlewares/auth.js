@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const key = require('../key');
 
 const handleAuthError = (res) => {
   res
@@ -20,7 +19,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, key.key);
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (err) {
     return handleAuthError(res);
   }
