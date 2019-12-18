@@ -1,10 +1,9 @@
-const Card = require('../models/card');
+const Card = require('../models/card.js');
 const NotFoundError = require('../errors/not-found-error');
 const AccessError = require('../errors/access-error');
 
 const getСards = (req, res, next) => {
   Card.find({})
-    .populate('card')
     .then((cards) => res.send({ data: cards }))
     .catch(next);
 };
@@ -17,7 +16,7 @@ const createCard = (req, res, next) => {
     .catch(next);
 };
 
-const delCard = async (req, res, next) => {
+const delCard = (req, res, next) => {
   const { _id } = req.user;
   const { cardId } = req.params;
 
@@ -41,37 +40,21 @@ const delCard = async (req, res, next) => {
 };
 
 
-const likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true },
-  )
-    .then((like) => {
-      if (!like) {
-        throw new NotFoundError('Нет карточки с таким id');
-      } else {
-        res.send({ data: like });
-      }
-    })
-    .catch(next);
-};
+const likeCard = (req, res, next) => Card.findByIdAndUpdate(
+  req.params.cardId,
+  { $addToSet: { likes: req.user._id } },
+  { new: true },
+)
+  .then((like) => res.status(201).send({ data: like }))
+  .catch(next);
 
-const dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
-  )
-    .then((like) => {
-      if (!like) {
-        throw new NotFoundError('Нет карточки с таким id');
-      } else {
-        res.send({ data: like });
-      }
-    })
-    .catch(next);
-};
+const dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
+  req.params.cardId,
+  { $pull: { likes: req.user._id } },
+  { new: true },
+)
+  .then((like) => res.send({ data: like }))
+  .catch(next);
 
 module.exports = {
   getСards,

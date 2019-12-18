@@ -1,6 +1,6 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-require('dotenv').config();
 const { celebrate, Joi } = require('celebrate');
 
 const { PORT = 3000 } = process.env;
@@ -36,7 +36,7 @@ app.get('/crash-test', () => {
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required(),
+    email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 }), login);
@@ -45,7 +45,7 @@ app.post('/signup', celebrate({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(100),
     avatar: Joi.string().required(),
-    email: Joi.string().required(),
+    email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 }), createUser);
@@ -66,7 +66,7 @@ app.use((err, req, res, next) => {
     .send({
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
-        : message
+        : message,
     });
 });
 

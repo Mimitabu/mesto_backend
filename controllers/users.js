@@ -1,16 +1,15 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../models/user');
-const NotFoundError = require('../errors/not-found-error');
-const AuthError = require('../errors/auth-error');
+const User = require('../models/user.js');
+const NotFoundError = require('../errors/not-found-error.js');
+const AuthorizationError = require('../errors/auth-error.js');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
-    .populate('user')
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch(next);
 };
 
 const getUserById = (req, res, next) => {
@@ -19,7 +18,7 @@ const getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Нет пользователя с таким id');
       } else {
-        res.send({ data: user });
+        return res.send({ data: user });
       }
     })
     .catch(next);
@@ -63,12 +62,12 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new AuthError('Неправильные почта или пароль');
+        throw new AuthorizationError('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new AuthError('Неправильные почта или пароль');
+            throw new AuthorizationError('Неправильные почта или пароль');
           }
           const token = jwt.sign(
             { _id: user._id },
@@ -76,9 +75,11 @@ const login = (req, res, next) => {
             { expiresIn: '7d' },
           );
           return res.cookie('jwt', token, {
-            maxAge: 3600000 * 24 * 7,
+            maxAge: 604800000,
             httpOnly: true,
+            sameSite: true,
           })
+            .send({ message: 'Успешная авторизация!' })
             .end();
         });
     })
