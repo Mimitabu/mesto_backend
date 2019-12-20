@@ -10,7 +10,6 @@ const app = express();
 
 const { errors } = require('celebrate');
 
-
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -54,6 +53,11 @@ app.use(auth);
 
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
+
+app.use('*', (req, res) => {
+  res.set('Content-Type', 'application/json');
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+});
 
 app.use(errorLogger);
 

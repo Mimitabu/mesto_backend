@@ -2,7 +2,7 @@ const Card = require('../models/card.js');
 const NotFoundError = require('../errors/not-found-error');
 const AccessError = require('../errors/access-error');
 
-const getСards = (req, res, next) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch(next);
@@ -11,12 +11,13 @@ const getСards = (req, res, next) => {
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
+
   Card.create({ name, link, owner })
     .then((cards) => res.status(201).send({ data: cards }))
     .catch(next);
 };
 
-const delCard = (req, res, next) => {
+const deleteCard = (req, res, next) => {
   const { _id } = req.user;
   const { cardId } = req.params;
 
@@ -57,9 +58,9 @@ const dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   .catch(next);
 
 module.exports = {
-  getСards,
+  getCards,
   createCard,
-  delCard,
+  deleteCard,
   likeCard,
   dislikeCard,
 };

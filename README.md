@@ -23,7 +23,7 @@ http://appmesto.ru/
 | DELETE /cards/:cardId/likes                       | убрать лайк карточке                                                |
 
 
-Fronend функционал проекта Mesto так же остался
+Frontend функционал проекта Mesto так же остался
 
 ### Стек
 
